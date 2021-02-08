@@ -25,20 +25,22 @@ const TEXT_POSITION_LEFT: f32 = 2.0;
 const PLATE_ANIMATION_TIMER_PERIOD: f32 = 0.25;
 
 fn main() {
-    App::build()
-        .insert_resource(WindowDescriptor {
-            title: "Nokia 3310 Game Jam 3".to_string(),
-            width: WINDOW_WIDTH,
-            height: WINDOW_HEIGHT,
-            vsync: true,
-            scale_factor_override: Some(10.0),
-            ..Default::default()
-        })
-        .insert_resource(PolarityIndicatorBoard {
-            polarity: PlateState::Negative,
-        })
-        .add_plugins(DefaultPlugins)
-        .insert_resource(ClearColor(Color::hex(COLOR_LIGHT).unwrap()))
+    let mut app = App::build();
+    app.insert_resource(WindowDescriptor {
+        title: "Nokia 3310 Game Jam 3".to_string(),
+        width: WINDOW_WIDTH,
+        height: WINDOW_HEIGHT,
+        vsync: true,
+        scale_factor_override: Some(10.0),
+        ..Default::default()
+    })
+    .insert_resource(PolarityIndicatorBoard {
+        polarity: PlateState::Negative,
+    })
+    .add_plugins(DefaultPlugins);
+    #[cfg(target_arch = "wasm32")]
+    app.add_plugin(bevy_webgl2::WebGL2Plugin);
+    app.insert_resource(ClearColor(Color::hex(COLOR_LIGHT).unwrap()))
         .add_startup_system(setup.system())
         .add_system(electron_physics_system.system())
         .add_system(plate_control_system.system())
